@@ -1,0 +1,48 @@
+
+#Htaccess Security By Lair_Nula
+RewriteEngine On
+
+#Descripcion: Debes quitar los simbolos de gato en las funciones segmentadas, no se lo quites al titulo, y tendras la funcion habilitada, recuerda tener este archivo en tu raiz web#
+
+#############Forzar Envio de HTTP a HTTPS##############
+
+RewriteCond %{HTTPS} off
+RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI}
+
+#######################################################
+
+
+############# Paginas de error para el usuario ##############
+
+ErrorDocument 400 /index.php
+ErrorDocument 404 /index.php
+ErrorDocument 403 /index.php
+ErrorDocument 500 /index.php
+
+#######################################################
+
+
+#############Evitar SQL#####################
+RewriteCond %{QUERY_STRING} DECLARE [NC]
+RewriteRule !403\.html$ - [F]
+RewriteCond %{QUERY_STRING} SELECT [NC]
+RewriteRule !403\.html$ - [F]
+RewriteCond %{QUERY_STRING} UPDATE [NC]
+RewriteRule !403\.html$ - [F]
+RewriteCond %{QUERY_STRING} DELETE [NC]
+RewriteRule !403\.html$ - [F]
+RewriteCond %{QUERY_STRING} TRUNCATE [NC]
+RewriteRule !403\.html$ - [F]
+RewriteCond %{QUERY_STRING} DROP [NC]
+RewriteRule !403\.html$ - [F]
+###########################################
+
+######Evitar Ddos#########################
+LimitRequestBody 10240000
+RewriteCond %{QUERY_STRING} ^([0-9]+)$ [NC,OR]
+RewriteCond %{QUERY_STRING} ^(.*)\?([0-9]+)(.*)$ [NC,OR]
+RewriteCond %{QUERY_STRING} ^([0-9]+\.[0-9])(.*)$ [NC,OR]
+RewriteCond %{QUERY_STRING} ^(.*)\?([0-9]+\.[0-9])(.*)$ [NC]
+RewriteRule ^(.*)$ %{HTTP_REFERER} [L]
+
+####################################################
